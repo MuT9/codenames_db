@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+class Game {
+}
+
 const WordSchema = new mongoose.Schema({
     word: {
         type: String,
@@ -15,7 +18,7 @@ const WordSchema = new mongoose.Schema({
     }
 });
 
-const Game = new mongoose.Schema({
+const GameSchema = new mongoose.Schema({
     words: {
         type: [WordSchema],
         required: true
@@ -45,7 +48,21 @@ const Game = new mongoose.Schema({
     teamBlue: {
         type: [String],
         default: []
+    },
+    turn: {
+        type: String,
+        default: 'red'
+    },
+    hintWord: {
+        type: String,
+        default: ''
+    },
+    hintCount: {
+        type: Number,
+        default: 0
     }
 });
 
-module.exports = mongoose.model('Game', Game);
+GameSchema.loadClass(Game);
+
+module.exports = mongoose.model('Game', GameSchema);
