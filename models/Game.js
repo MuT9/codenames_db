@@ -8,6 +8,11 @@ class Game {
         await this.save();
     }
 
+    async makeMove(wordId, team) {
+        const wordsIds = this.words.map(word => word._id);
+        const wordIndex = wordsIds.indexOf(wordId);
+    }
+
     async addPlayer(playerId, role) {
         if (Array.isArray(this[role])) {
             this[role].push(playerId);

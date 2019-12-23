@@ -96,6 +96,10 @@ gamesRouter.route('/games/:id/hint')
 gamesRouter.route('/games/:id/move')
     .post(async (req, res, next) => {
         try {
+            const game = await Game.findById(req.params.id);
+
+            await game.makeMove(req.body.wordId, req.body.team);
+
             res.status(200);
             res.json({});
         } catch (e) {
