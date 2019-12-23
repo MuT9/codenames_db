@@ -54,19 +54,12 @@ gamesRouter.route('/games/:id')
     });
 
 gamesRouter.route('/games/:id/join')
-    .post(async (req, res, next) => {
+    .post(playerValidator, async (req, res, next) => {
         try {
             const game = await Game.findById(req.params.id);
-            const role = req.body.role;
 
             // TODO проверки заняты ли роли, есть ли уже такой юзер и тд
-            if (Array.isArray(game[role])) {
-                game[role].push(req.body.userId);
-            } else {
-                game[role] = req.body.userId
-            }
-
-            await game.save();
+            await game.addPlayer(req.body.playerId, req.body.role)
 
             res.status(200);
             res.json(game);
@@ -74,6 +67,63 @@ gamesRouter.route('/games/:id/join')
             next(e);
         }
     });
+
+gamesRouter.route('/games/:id/hint')
+    .get(async (req, res, next) => {
+        try {
+            const hint = await Game.findById(req.params.id).select('hintWord hintCount -_id');
+
+            res.status(200);
+            res.json(hint);
+        } catch (e) {
+            next(e);
+        }
+    })
+    .post(async (req, res, next) => {
+        try {
+            const game = await Game.findById(req.params.id);
+
+            // TODO проверки на валидность
+            game.setHint(req.body.hintWord, req.body.hintCount);
+
+            res.status(200);
+            res.json(game);
+        } catch (e) {
+            next(e);
+        }
+    });
+
+gamesRouter.route('/games/:id/move')
+    .post(async (req, res, next) => {
+        try {
+            res.status(200);
+            res.json({});
+        } catch (e) {
+            next(e);
+        }
+    });
+
+async function playerValidator (req, res, next) {
+    try {
+        const { playerId, role } = req.body;
+        const game = await Game.findById(req.params.id);
+        const players = game.getAllPlayers();
+
+        if (players.includes(req.body.playerId)) {
+            // TODO Обработка ошибок
+            throw new Error('Player already joined');
+        }
+
+        if (!Array.isArray(game[role]) && !!game[role]) {
+            throw new Error('Captain already chosen');
+        }
+
+        req.game = game;
+        next();
+    } catch(e) {
+        next(e);
+    }
+};
 
 module.exports = gamesRouter;
 
