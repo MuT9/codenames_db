@@ -98,10 +98,10 @@ gamesRouter.route('/games/:id/move')
         try {
             const game = await Game.findById(req.params.id);
 
-            await game.makeMove(req.body.wordId, req.body.team);
+            const word = await game.makeMove(req.body.word, req.body.team);
 
             res.status(200);
-            res.json({});
+            res.json(word);
         } catch (e) {
             next(e);
         }

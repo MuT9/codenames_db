@@ -8,9 +8,40 @@ class Game {
         await this.save();
     }
 
-    async makeMove(wordId, team) {
-        const wordsIds = this.words.map(word => word._id);
-        const wordIndex = wordsIds.indexOf(wordId);
+    async makeMove(requestWord, team) {
+        const wordObject = this.words.find(wordObject => requestWord === wordObject.word);
+
+        if (!wordObject) {
+            throw new Error('There is no such word');
+        }
+
+        if (wordObject.guessed) {
+            throw new Error('Word already guessed');
+        }
+
+        wordObject.guessed = true;
+
+        if (wordObject.color === 'black') {
+            this.gameOver = true;
+
+            await this.save();
+
+            return wordObject;
+        }
+
+        if (team != wordObject.color) {
+            this.turnOver();
+
+            await this.save();
+
+            return wordObject;
+        }
+
+
+
+        await this.save();
+
+        return wordObject;
     }
 
     async addPlayer(playerId, role) {
@@ -23,8 +54,12 @@ class Game {
         await this.save();
     }
 
-    checkForGameOver() {
-        return this.score.red > 8 || this.score.blue > 7 || this.words.some(word => word.color === 'black' && word.guessed);
+    async checkForGameOver() {
+        if (this.score.red > 8 || this.score.blue > 7 || this.words.some(word => word.color === 'black' && word.guessed)) {
+            this.gameOver = true;
+
+            await this.save();
+        }
     }
 
     getAllPlayers() {
@@ -55,6 +90,10 @@ const GameSchema = new mongoose.Schema({
     words: {
         type: [WordSchema],
         required: true
+    },
+    gameOver: {
+        type: Boolean,
+        default: false
     },
     score: {
         red: {
