@@ -8,6 +8,13 @@ class Game {
         await this.save();
     }
 
+    updateScore(team) {
+        this.score = {
+            ...this.score,
+            [team]: this.score[team] + 1
+        };
+    }
+
     async makeMove(requestWord, team) {
         const wordObject = this.words.find(wordObject => requestWord === wordObject.word);
 
@@ -37,7 +44,7 @@ class Game {
             return wordObject;
         }
 
-
+        this.updateScore(team);
 
         await this.save();
 
@@ -68,6 +75,8 @@ class Game {
 
     turnOver() {
         this.turn = this.turn === 'red' ? 'blue' : 'red';
+        this.hintCount = 0;
+        this.hintWord = '';
     }
 }
 

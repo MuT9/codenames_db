@@ -84,7 +84,7 @@ gamesRouter.route('/games/:id/hint')
             const game = await Game.findById(req.params.id);
 
             // TODO проверки на валидность
-            game.setHint(req.body.hintWord, req.body.hintCount);
+            await game.setHint(req.body.hintWord, req.body.hintCount);
 
             res.status(200);
             res.json(game);
