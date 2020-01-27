@@ -36,7 +36,7 @@ class Game {
             return wordObject;
         }
 
-        if (team != wordObject.color) {
+        if (wordObject.color === 'gray') {
             this.turnOver();
 
             await this.save();
@@ -44,7 +44,12 @@ class Game {
             return wordObject;
         }
 
-        this.updateScore(team);
+        this.updateScore(wordObject.color);
+        this.hintCount-=1;
+
+        if (team != wordObject.color || this.hintCount < 1) {
+            this.turnOver();
+        }
 
         await this.save();
 
