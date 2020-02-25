@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
+const { COLORS, DICTIONARY, DEFAULT_WORDS_COUNT } = require('../constants');    
 
 class Game {
+    async createGame() {
+
+    }
+
     async setHint(word, count) {
         this.hintWord = word;
         this.hintCount = count;
 
-        await this.save();
+        return this.save();
     }
 
     updateScore(team) {
@@ -15,7 +20,7 @@ class Game {
         };
     }
 
-    async makeMove(requestWord, team) {
+    async makeMove(requestWord) {
         const wordObject = this.words.find(wordObject => requestWord === wordObject.word);
 
         if (!wordObject) {
@@ -47,7 +52,7 @@ class Game {
         this.updateScore(wordObject.color);
         this.hintCount-=1;
 
-        if (team != wordObject.color || this.hintCount < 1) {
+        if (this.turn != wordObject.color || this.hintCount < 1) {
             this.turnOver();
         }
 
@@ -73,6 +78,16 @@ class Game {
             await this.save();
         }
     }
+
+    generateField(wordsCount = DEFAULT_WORDS_COUNT) {
+        const words = DICTIONARY.sort(() => Math.random() - 0.5).slice(0, wordsCount);
+        const colors = COLORS.sort(() => Math.random() - 0.5).slice(0, wordsCount);
+
+        return words.map((word, index) => ({
+            word,
+            color: colors[index]
+        }))
+    };
 
     getAllPlayers() {
         return [...this.teamRed, ...this.teamBlue, this.captainRed, this.captainBlue].filter(id => !!id);
