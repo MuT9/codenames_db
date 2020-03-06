@@ -1,16 +1,8 @@
 const mongoose = require('mongoose');
-const { COLORS, DICTIONARY, DEFAULT_WORDS_COUNT } = require('../constants');    
 
 class Game {
     async createGame() {
-
-    }
-
-    async setHint(word, count) {
-        this.hintWord = word;
-        this.hintCount = count;
-
-        return this.save();
+        return this
     }
 
     updateScore(team) {
@@ -61,16 +53,6 @@ class Game {
         return wordObject;
     }
 
-    async addPlayer(playerId, role) {
-        if (Array.isArray(this[role])) {
-            this[role].push(playerId);
-        } else {
-            this[role] = playerId;
-        }
-
-        await this.save();
-    }
-
     async checkForGameOver() {
         if (this.score.red > 8 || this.score.blue > 7 || this.words.some(word => word.color === 'black' && word.guessed)) {
             this.gameOver = true;
@@ -99,6 +81,9 @@ class Game {
         this.hintWord = '';
     }
 }
+
+//TODO Подключить typescript
+//TODO Валидация полей
 
 const WordSchema = new mongoose.Schema({
     word: {
