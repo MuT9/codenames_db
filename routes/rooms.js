@@ -30,7 +30,7 @@ roomRouter.route('/join')
         try {
             const isPlayerAlreadyJoined = await Room.countDocuments({
                 chat_id: req.body.chat_id,
-                players: { $elemMatch: { user_id: req.body.user_id }}
+                players: { $elemMatch: { user_id: req.body.user.user_id }}
             });
 
             if (isPlayerAlreadyJoined) {
