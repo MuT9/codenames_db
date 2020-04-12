@@ -3,86 +3,88 @@ const mongoose = require('mongoose');
 const PlayerSchema = require('./PlayerSchema');
 const WordSchema = require('./WordSchema');
 
+const { generateField } = require('../utils');
+
 class Game {
-    async createGame() {
-        return this
-    }
+    // async createGame() {
+    //     return this
+    // }
 
-    updateScore(team) {
-        this.score = {
-            ...this.score,
-            [team]: this.score[team] + 1
-        };
-    }
+    // updateScore(team) {
+    //     this.score = {
+    //         ...this.score,
+    //         [team]: this.score[team] + 1
+    //     };
+    // }
 
-    async makeMove(requestWord) {
-        const wordObject = this.words.find(wordObject => requestWord === wordObject.word);
+    // async makeMove(requestWord) {
+    //     const wordObject = this.words.find(wordObject => requestWord === wordObject.word);
 
-        if (!wordObject) {
-            throw new Error('There is no such word');
-        }
+    //     if (!wordObject) {
+    //         throw new Error('There is no such word');
+    //     }
 
-        if (wordObject.guessed) {
-            throw new Error('Word already guessed');
-        }
+    //     if (wordObject.guessed) {
+    //         throw new Error('Word already guessed');
+    //     }
 
-        wordObject.guessed = true;
+    //     wordObject.guessed = true;
 
-        if (wordObject.color === 'black') {
-            this.gameOver = true;
+    //     if (wordObject.color === 'black') {
+    //         this.gameOver = true;
 
-            await this.save();
+    //         await this.save();
 
-            return wordObject;
-        }
+    //         return wordObject;
+    //     }
 
-        if (wordObject.color === 'gray') {
-            this.turnOver();
+    //     if (wordObject.color === 'gray') {
+    //         this.turnOver();
 
-            await this.save();
+    //         await this.save();
 
-            return wordObject;
-        }
+    //         return wordObject;
+    //     }
 
-        this.updateScore(wordObject.color);
-        this.hintCount-=1;
+    //     this.updateScore(wordObject.color);
+    //     this.hintCount-=1;
 
-        if (this.turn != wordObject.color || this.hintCount < 1) {
-            this.turnOver();
-        }
+    //     if (this.turn != wordObject.color || this.hintCount < 1) {
+    //         this.turnOver();
+    //     }
 
-        await this.save();
+    //     await this.save();
 
-        return wordObject;
-    }
+    //     return wordObject;
+    // }
 
-    async checkForGameOver() {
-        if (this.score.red > 8 || this.score.blue > 7 || this.words.some(word => word.color === 'black' && word.guessed)) {
-            this.gameOver = true;
+    // async checkForGameOver() {
+    //     if (this.score.red > 8 || this.score.blue > 7 || this.words.some(word => word.color === 'black' && word.guessed)) {
+    //         this.gameOver = true;
 
-            await this.save();
-        }
-    }
+    //         await this.save();
+    //     }
+    // }
 
-    generateField(wordsCount = DEFAULT_WORDS_COUNT) {
-        const words = DICTIONARY.sort(() => Math.random() - 0.5).slice(0, wordsCount);
-        const colors = COLORS.sort(() => Math.random() - 0.5).slice(0, wordsCount);
+    // generateField(wordsCount = DEFAULT_WORDS_COUNT) {
+    //     const words = DICTIONARY.sort(() => Math.random() - 0.5).slice(0, wordsCount);
+    //     const colors = COLORS.sort(() => Math.random() - 0.5).slice(0, wordsCount);
 
-        return words.map((word, index) => ({
-            word,
-            color: colors[index]
-        }))
-    };
+    //     return words.map((word, index) => ({
+    //         word,
+    //         color: colors[index]
+    //     }))
+    // };
 
-    getAllPlayers() {
-        return [...this.teamRed, ...this.teamBlue, this.captainRed, this.captainBlue].filter(id => !!id);
-    }
+    // getAllPlayers() {
+    //     return [...this.teamRed, ...this.teamBlue, this.captainRed, this.captainBlue].filter(id => !!id);
+    // }
 
-    turnOver() {
-        this.turn = this.turn === 'red' ? 'blue' : 'red';
-        this.hintCount = 0;
-        this.hintWord = '';
-    }
+    // turnOver() {
+    //     this.turn = this.turn === 'red' ? 'blue' : 'red';
+    //     this.hintCount = 0;
+    //     this.hintWord = '';
+    // }
 }
 
 //TODO Подключить typescript
@@ -144,5 +146,13 @@ const GameSchema = new mongoose.Schema({
 });
 
 GameSchema.loadClass(Game);
+
+GameSchema.pre('save', function(next) {
+    if (this.isNew) {
+        this.words = generateField();
+    }
+
+    next();
+})
 
 module.exports = mongoose.model('Game', GameSchema);

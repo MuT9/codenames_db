@@ -9,7 +9,7 @@ const generateAnswer = (success = false, res = null, err = null) => ({
     success,
     result: res,
     error: err
-})
+});
 
 roomRouter.route('/')
     .get(async (req, res) => {

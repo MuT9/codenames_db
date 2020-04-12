@@ -1,37 +1,42 @@
 const { Router } = require('express');
 const Game = require('../models/Game');
-const { generateField } = require('../utils');
-const gameRouter = require('./game');
 
 const gamesRouter = new Router();
 
-// TODO Переделать роутинг, выделить роуты к конкретной игре
-gamesRouter.route('/games')
-    .get(async(req, res, next) => {
+// TODO сделать нормальный генератор ответа
+const generateAnswer = (success = false, res = null, err = null) => ({
+    success,
+    result: res,
+    error: err
+});
+
+gamesRouter.route('/hint')
+    .get(async (req, res) => {
         try {
-            res
-                .status(200)
-                .json(await Game.find());
-        } catch(e) {
-            next(e);
+            const game = await Game.findOne({ chat_id: req.query.chat_id });
+
+            res.json(generateAnswer(true, { hint_word: game.hint_word, hint_count:  room.hint_count }));
+        } catch (e) {
+            res.json(generateAnswer(false, undefined, { message: e.message }))
         }
     })
-    .post(async (req, res, next) => {
+    .post(async (req, res) => {
         try {
-            res
-                .status(200)
-                .json(await Game.create({ words: generateField() }));
+            await Game.updateOne(
+                { chat_id: req.body.chat_id },
+                { $set: 
+                    {
+                        hint_word: req.body.hint_word,
+                        hint_count: req.body.hint_count
+                    }
+                }
+            );
 
-        } catch(e) {
-            next(e);
+            res.json(generateAnswer(true));
+        } catch (e) {
+            res.json(generateAnswer(false, undefined, { message: e.message }))
         }
     });
-
-gamesRouter.use('/games/:id', async (req, res, next) => {
-    req.game = await Game.findById(req.params.id);
-
-    next();
-}, gameRouter);
 
 module.exports = gamesRouter;
 
