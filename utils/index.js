@@ -12,34 +12,34 @@ const generateField = (wordsCount = DEFAULT_WORDS_COUNT) => {
 
 const generateTeams = players => {
     const shuffledPlayers = players.sort(() => Math.random() - 0.5);
-    const captainRed = shuffledPlayers[0];
-    const captainBlue = shuffledPlayers[1];
+    const captain_red = shuffledPlayers[0];
+    const captain_blue = shuffledPlayers[1];
     const restPlayers = shuffledPlayers.slice(2,shuffledPlayers.length);
     const separatorIndex = Math.floor(restPlayers.length/2);
-    const teamBlue = restPlayers.slice(0, separatorIndex);
+    const team_blue = restPlayers.slice(0, separatorIndex);
 
     if (restPlayers.length % 2 === 0) {
         return {
-            captainRed,
-            captainBlue,
-            teamBlue,
-            teamRed: restPlayers.slice(separatorIndex, restPlayers.length)
+            captain_red,
+            captain_blue,
+            team_blue,
+            team_red: restPlayers.slice(separatorIndex, restPlayers.length)
         }
     }
 
-    const teamRed = restPlayers.slice(separatorIndex, restPlayers.length - 1);
+    const team_red = restPlayers.slice(separatorIndex, restPlayers.length - 1);
 
     if (Math.random() < 0.5) {
-        teamBlue.push(restPlayers[restPlayers.length - 1]);
+        team_blue.push(restPlayers[restPlayers.length - 1]);
     } else {
-        teamBlue.push(restPlayers[restPlayers.length - 1]);
+        team_red.push(restPlayers[restPlayers.length - 1]);
     }
 
     return {
-        captainRed,
-        captainBlue,
-        teamBlue,
-        teamRed
+        captain_red,
+        captain_blue,
+        team_blue,
+        team_red
     }
 };
 

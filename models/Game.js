@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+const PlayerSchema = require('./PlayerSchema');
+const WordSchema = require('./WordSchema');
+
 class Game {
     async createGame() {
         return this
@@ -85,27 +88,17 @@ class Game {
 //TODO Подключить typescript
 //TODO Валидация полей
 
-const WordSchema = new mongoose.Schema({
-    word: {
-        type: String,
-        required: true
-    },
-    color: {
-        type: String,
-        required: true
-    },
-    guessed: {
-        type: Boolean,
-        default: false
-    }
-});
-
 const GameSchema = new mongoose.Schema({
+    chat_id: {
+        type: String,
+        required: true,
+        unique: true
+    },
     words: {
         type: [WordSchema],
         required: true
     },
-    gameOver: {
+    game_over: {
         type: Boolean,
         default: false
     },
@@ -119,31 +112,32 @@ const GameSchema = new mongoose.Schema({
             default: 0
         }
     },
-    captainRed: {
-        type: String,
-        default: ''
+    captain_red: {
+        type: PlayerSchema,
+        required: true
     },
-    captainBlue: {
-        type: String,
-        default: ''
+    captain_blue: {
+        type: PlayerSchema,
+        required: true
     },
-    teamRed: {
-        type: [String],
-        default: []
+    team_red: {
+        type: [PlayerSchema],
+        required: true
     },
-    teamBlue: {
-        type: [String],
-        default: []
+    team_blue: {
+        type: [PlayerSchema],
+        required: true
     },
     turn: {
         type: String,
-        default: 'red'
+        enum: ['captain_red', 'captain_blue', 'team_red', 'team_blue'],
+        default: 'captain_red'
     },
-    hintWord: {
+    hint_word: {
         type: String,
         default: ''
     },
-    hintCount: {
+    hint_count: {
         type: Number,
         default: 0
     }

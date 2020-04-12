@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const Room = require('../models/Room');
+const Game = require('../models/Game');
 const { generateTeams } = require('../utils');
 
 const roomRouter = new Router();
@@ -95,18 +96,21 @@ roomRouter.route('/play')
                 return;
             }
 
-            const { captainBlue, captainRed, teamBlue, teamRed } = generateTeams(room.players);
+            const { captain_blue, captain_red, team_blue, team_red } = generateTeams(room.players);
 
             room.in_game = true;
 
             await room.save();
 
-            res.json(generateAnswer(true, {
-                captain_red: captainRed,
-                captain_blue: captainBlue,
-                team_red: teamRed,
-                team_blue: teamBlue
-            }));
+            const game = await Game.create({
+                chat_id: req.body.chat_id,
+                captain_blue,
+                captain_red,
+                team_blue,
+                team_red
+            });
+
+            res.json(generateAnswer(true, game));
         } catch (e) {
             res.json(generateAnswer(false, undefined, { message: e.message }))
         }
