@@ -30,6 +30,10 @@ const roomSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    in_game: {
+        type: Boolean,
+        default: false
+    },
     players: {
         type: [playerSchema]
     }
