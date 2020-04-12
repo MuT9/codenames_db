@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/rooms', roomRouter);
-// app.use('/', gamesRouter);
+app.use('/games', gamesRouter);
 
 app.listen(PORT, HOST, async () => {
     try {
