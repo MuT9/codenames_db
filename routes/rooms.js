@@ -37,6 +37,21 @@ roomRouter.route('/')
         } catch (e) {
             res.json(generateAnswer(false, undefined, { message: e.message }))
         }
+    })
+    .delete(async (req, res) => {
+        try {
+            const room = await Room.findOne({ chat_id: req.body.chat_id});
+
+            if (room.in_game) {
+                await Game.deleteOne({ chat_id: req.body.chat_id });
+            }
+
+            await Room.deleteOne({ chat_id: req.body.chat_id });
+
+            res.json(generateAnswer(true));
+        } catch (e) {
+            res.json(generateAnswer(false, undefined, { message: e.message }))
+        }
     });
 
 roomRouter.route('/players')

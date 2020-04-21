@@ -10,6 +10,17 @@ const generateAnswer = (success = false, res = null, err = null) => ({
     error: err
 });
 
+gamesRouter.route('/')
+    .delete(async (req, res) => {
+        try {
+            await Game.deleteOne({ chat_id: req.body.chat_id });
+
+            res.json(generateAnswer(true));
+        } catch (e) {
+            res.json(generateAnswer(false, undefined, { message: e.message }))
+        }
+    });
+
 gamesRouter.route('/hint')
     .get(async (req, res) => {
         try {
