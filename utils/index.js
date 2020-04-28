@@ -52,8 +52,16 @@ const fakeGenerateTeams = () => ({
     team_red: [FAKE_USER_BAZEMENT]
 });
 
+const fakeSetRoomPlayers = () => ([
+    FAKE_USER_BAZEMENT,
+    FAKE_USER_BAZEMENT,
+    FAKE_USER_MUT9,
+    FAKE_USER_MUT9
+]);
+
 module.exports = {
     generateField,
     generateTeams,
-    fakeGenerateTeams
+    fakeGenerateTeams,
+    fakeSetRoomPlayers
 }

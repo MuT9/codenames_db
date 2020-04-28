@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const Room = require('../models/Room');
 const Game = require('../models/Game');
-const { generateTeams, fakeGenerateTeams } = require('../utils');
+const { generateTeams, fakeGenerateTeams, fakeSetRoomPlayers } = require('../utils');
 
 const roomRouter = new Router();
 
@@ -31,7 +31,11 @@ roomRouter.route('/')
                 return;
             }
 
-            const room =  await Room.create({ chat_id: req.body.chat_id });
+            // TODO remove fake players
+            const room =  await Room.create({
+                chat_id: req.body.chat_id,
+                players: fakeSetRoomPlayers()
+            });
 
             res.json(generateAnswer(true, room));
         } catch (e) {
@@ -99,12 +103,11 @@ roomRouter.route('/play')
         try {
             const room = await Room.findOne({ chat_id: req.body.chat_id });
 
-            // TODO uncomment
-            // if (room.players.length < 4) {
-            //     res.json(generateAnswer(false, undefined, { message: 'Not enough players' }));
+            if (room.players.length < 4) {
+                res.json(generateAnswer(false, undefined, { message: 'Not enough players' }));
 
-            //     return;
-            // }
+                return;
+            }
 
             if (room.in_game) {
                 res.json(generateAnswer(false, undefined, { message: 'Game already started' }));
