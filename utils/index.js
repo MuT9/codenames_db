@@ -1,4 +1,6 @@
-const { COLORS, DICTIONARY, DEFAULT_WORDS_COUNT } = require('../constants');  
+const {
+    COLORS, DICTIONARY, DEFAULT_WORDS_COUNT, FAKE_USER_BAZEMENT, FAKE_USER_MUT9
+} = require('../constants');  
 
 const generateField = (wordsCount = DEFAULT_WORDS_COUNT) => {
     const words = DICTIONARY.sort(() => Math.random() - 0.5).slice(0, wordsCount);
@@ -43,7 +45,15 @@ const generateTeams = players => {
     }
 };
 
+const fakeGenerateTeams = () => ({
+    captain_red: FAKE_USER_BAZEMENT,
+    captain_blue: FAKE_USER_MUT9,
+    team_blue: [FAKE_USER_MUT9],
+    team_red: [FAKE_USER_BAZEMENT]
+});
+
 module.exports = {
     generateField,
-    generateTeams
+    generateTeams,
+    fakeGenerateTeams
 }

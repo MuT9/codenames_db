@@ -41,8 +41,28 @@ const DICTIONARY = [
     "шоколад","шпагат","шпион","шуба","эльф","яблоко","язык","ячмень"
 ];
 
+const FAKE_USER_MUT9 = {
+    user_id: 76416270,
+    is_bot: false,
+    first_name: 'Dmitry',
+    username: 'mityaa',
+    last_name: 'Titov',
+    language_code: 'ru'
+};
+
+const FAKE_USER_BAZEMENT = {
+    user_id: 103217623,
+    is_bot: false,
+    first_name: 'Ivan',
+    username: 'bazement',
+    last_name: 'Bazanov',
+    language_code: 'ru'
+};
+
 module.exports = {
     COLORS,
     DEFAULT_WORDS_COUNT,
-    DICTIONARY
+    DICTIONARY,
+    FAKE_USER_MUT9,
+    FAKE_USER_BAZEMENT
 }
